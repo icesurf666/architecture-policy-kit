@@ -1,0 +1,80 @@
+version: 1
+repository: ProgressCut
+policies:
+  - id: engine-no-node
+    scope:
+      - packages/engine/src/**
+    kind: deterministic
+    severity: block
+    statement: Engine code must not import Node built-ins, Electron, or platform APIs.
+    reason: Story selection must run against fixtures and remain independent of capture and filesystem adapters.
+    review_instruction: Block an import of node:*, electron, or a platform API inside packages/engine/src.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: eslint
+      description: Restrict platform imports by path in the engine package.
+
+  - id: domain-no-runtime-deps
+    scope:
+      - packages/domain/src/**
+    kind: mixed
+    severity: block
+    statement: Domain types and rules must not depend on validation, database, UI, or framework runtimes.
+    reason: Domain objects are shared by the CLI, desktop processes, and tests without inheriting an adapter runtime.
+    review_instruction: Block a runtime dependency in the domain and name the import or call that creates the coupling.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: eslint
+      description: Restrict known framework dependencies; review unknown packages as semantic exceptions.
+
+  - id: renderer-no-electron
+    scope:
+      - apps/desktop/src/renderer/**
+    kind: deterministic
+    severity: block
+    statement: Renderer code must use the typed preload bridge and must not import Electron directly.
+    reason: The bridge is the auditable list of privileged operations exposed to an untrusted UI process.
+    review_instruction: Block a direct Electron import in the renderer; allow an explicit DesktopBridge call.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: eslint
+      description: Restrict the electron package inside the renderer source tree.
+
+  - id: atomic-recovery-write
+    scope:
+      - apps/desktop/src/main/recovery/**
+    kind: mixed
+    severity: block
+    statement: Recovery manifests must be replaced through a sibling temporary file and rename.
+    reason: A process crash during a direct write can leave JSON that a restart cannot parse.
+    review_instruction: Block direct manifest replacement without a temporary write and same-filesystem rename.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: integration-test
+      description: Kill the app after a checkpoint and verify a fresh process discovers valid recovery metadata.
+
+  - id: exact-render-duration
+    scope:
+      - packages/render/src/ffmpeg/**
+    kind: mixed
+    severity: block
+    statement: FFmpeg output must be capped to the selected story duration.
+    reason: The concat still-frame workaround can produce extra tail time in a playable MP4.
+    review_instruction: Block a render path that omits the calculated output duration cap.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: integration-test
+      description: Render a known story and inspect its duration with ffprobe.
+
+  - id: safe-output-path
+    scope:
+      - apps/desktop/src/main/export/**
+    kind: mixed
+    severity: block
+    statement: A requested export name must resolve to a child of the selected output directory.
+    reason: Shared string prefixes and parent traversal can write outside the session folder.
+    review_instruction: Block a containment check that accepts a sibling prefix or parent traversal.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: unit-test
+      description: Test sibling-prefix, parent-traversal, absolute-path, and ordinary child-path inputs.

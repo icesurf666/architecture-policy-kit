@@ -1,0 +1,17 @@
+# Copy this file to architecture-policy.yaml and replace the example policy.
+# The JSON Schema at ../policy/schema.json is the contract for this format.
+version: 1
+repository: example-repository
+policies:
+  - id: example-boundary
+    scope:
+      - packages/core/**
+    kind: deterministic # deterministic | semantic | mixed
+    severity: block # block | warn
+    statement: Core code must not import the HTTP framework.
+    reason: Core logic should run in tests and jobs without the web server runtime.
+    review_instruction: Block framework imports in packages/core and cite the import.
+    evidence_required: true
+    deterministic_enforcement:
+      mechanism: eslint
+      description: Restrict the framework package for files under packages/core.

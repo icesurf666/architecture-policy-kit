@@ -1,59 +1,112 @@
-# Architecture Review Kit
+# Architecture Policy Kit for AI Code Review
 
-Small, copyable fixtures for reviewing TypeScript changes that may work while
-violating repository boundaries.
+An AI reviewer is useful only if it follows the architecture rules your team
+actually cares about. This kit turns repository invariants into explicit
+policies, near-miss fixtures, and a small evaluation set.
 
-The kit is useful when a project has rules such as “the UI never imports
-Electron” or “recovery records are written atomically”, but those rules live in
-someone's head instead of a repeatable review process.
-
-It includes six rules, a good and bad diff for each rule, and a structured
-prompt for an AI reviewer. The examples come from the architecture of
-[ProgressCut](https://github.com/icesurf666/progress-cut), but contain no
-screenshots, user sessions, or application code.
-
-## Start here
-
-1. Read [rules.md](rules.md).
-2. Paste [audit-prompt.md](audit-prompt.md) and one diff into your preferred
-   review agent.
-3. Compare the result with the expected verdict in the fixture header.
-4. Replace the example rules with the actual boundaries in your repository.
+It does **not** make LLM code review reliable. The goal is fewer false accepts,
+fewer false blocks, and deterministic CI for rules that do not need an LLM.
 
 ```text
-good/  → changes a reviewer should approve
-bad/   → changes a reviewer should block
+repository invariants
+        ↓
+scoped policy pack
+        ↓
+approve/block near-miss fixtures
+        ↓
+reviewer evaluation
+        ↓
+false accepts / false blocks / schema failures
+        ↓
+deterministic CI where possible; LLM review where context matters
 ```
 
-The examples are paired deliberately. A renderer calling a typed bridge is
-allowed; importing Electron directly is not. A `resolve()` check with a path
-separator is allowed; a prefix-only check is not.
+The included ProgressCut pack is a working example, not a set of Electron rules
+you are supposed to copy unchanged.
 
-## Rules covered
+## Repository map
 
-| Rule | Good fixture | Bad fixture |
+```text
+policy/schema.json                     JSON Schema for a policy pack
+templates/policy.yaml                  minimal policy-pack template
+examples/progresscut/policy.yaml       six policy examples
+examples/progresscut/fixtures/         paired approve/block near-misses
+prompts/                               generic, Claude, and Codex contracts
+eval/cases.jsonl                       answer key for the public example set
+eval/scoring.md                        how to measure reviewer failures
+docs/                                  rule-writing and adoption guides
+```
+
+## Start with your repository
+
+1. Copy [`templates/policy.yaml`](templates/policy.yaml) into your repository.
+2. Write five to fifteen policies from incidents, postmortems, and repeated PR
+   comments — not from generic architecture slogans.
+3. Give every policy a path scope, a failure it prevents, and one near-miss that
+   should still be approved.
+4. Classify it:
+   - `deterministic` — lint, AST checks, or tests can enforce it;
+   - `semantic` — context is needed, so an LLM or human must review it;
+   - `mixed` — a deterministic test protects the invariant while a reviewer
+     catches new ways to bypass the established path.
+5. Run the policy prompt on the fixtures. Record verdict, policy ID, schema
+   compliance, and evidence separately.
+6. Move deterministic rules into CI. Keep models as a review signal for the
+   remainder.
+
+Read [`docs/adopting-in-a-real-repo.md`](docs/adopting-in-a-real-repo.md) before
+using a model result as a merge requirement.
+
+## ProgressCut example
+
+[`examples/progresscut/policy.yaml`](examples/progresscut/policy.yaml) contains
+six policies from a local-first Electron application:
+
+| Policy | Classification | Primary enforcement |
 | --- | --- | --- |
-| Pure engine | `good/01-pure-engine-function.diff` | `bad/01-engine-node-import.diff` |
-| Runtime-free domain | `good/02-domain-branded-id.diff` | `bad/02-domain-runtime-import.diff` |
-| Renderer boundary | `good/03-renderer-bridge.diff` | `bad/03-renderer-electron-import.diff` |
-| Atomic recovery | `good/04-atomic-manifest.diff` | `bad/04-non-atomic-manifest.diff` |
-| Exact render duration | `good/05-duration-cap.diff` | `bad/05-uncapped-render.diff` |
-| Safe export path | `good/06-safe-output-path.diff` | `bad/06-output-prefix-confusion.diff` |
+| Engine has no Node/platform I/O | deterministic | ESLint path restriction |
+| Domain has no runtime adapter dependency | mixed | ESLint plus review |
+| Renderer has no direct Electron import | deterministic | ESLint path restriction |
+| Recovery writes replace-by-rename | mixed | crash/restart integration test |
+| Rendered MP4 matches story duration | mixed | `ffprobe` integration test |
+| Export path stays under session root | mixed | traversal unit tests |
 
-## What this is not
+The paired fixtures are intentionally close. The renderer may call a typed
+preload bridge, but it may not import Electron. A safe export check must reject
+parent traversal and sibling prefixes, not merely call `resolve()`.
 
-This is not a universal benchmark or a replacement for tests and code review.
-It is a compact starting point for making architecture policy explicit. The
-fixtures are synthetic, single-file, and intentionally readable in under a
-minute.
+## Evaluate a reviewer honestly
 
-For the public model comparison built from these fixtures, see the
-[Kaggle benchmark](https://www.kaggle.com/benchmarks/pavelkazantsev7776/architecture-aware-typescript-code-review/versions/1).
+The public fixtures are answer-labelled teaching material. Do not send
+`examples/.../approve` or `examples/.../block` directly to a model and call its
+answer a benchmark; the directory and header leak the result.
 
-## Keep the discussion going
+For a real evaluation:
 
-I publish small engineering experiments about local-first tools, reliability,
-and AI-assisted development at [pkazantsev.com/writing](https://www.pkazantsev.com/writing).
+- keep a private holdout set;
+- remove labels before prompting;
+- pin the policy, prompt, model, and integration version;
+- report false accepts and false blocks separately;
+- validate structured output before counting a verdict;
+- check evidence against the diff rather than accepting a long explanation.
+
+[`eval/scoring.md`](eval/scoring.md) defines the reporting contract. The public
+[Kaggle benchmark](https://www.kaggle.com/benchmarks/pavelkazantsev7776/architecture-aware-typescript-code-review/versions/1)
+is the first, intentionally small demonstration of the method.
+
+## What this kit does not include
+
+There is no hosted reviewer, GitHub App, CI runner, model vendor lock-in, or
+claim that every architecture rule belongs in a prompt. Those are integration
+decisions after you know which policies matter and how the reviewer behaves on
+your fixtures.
+
+## Read next
+
+- [Writing good rules](docs/writing-good-rules.md)
+- [Deterministic checks first](docs/deterministic-vs-llm.md)
+- [Adopting a policy pack](docs/adopting-in-a-real-repo.md)
+- [ProgressCut: the source project](https://github.com/icesurf666/progress-cut)
 
 ## License
 

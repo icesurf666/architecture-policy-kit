@@ -1,0 +1,12 @@
+{"id":"engine-node-import","fixture":"examples/progresscut/fixtures/block/01-engine-node-import.diff","policy_id":"engine-no-node","decision":"BLOCK","evidence_any_of":["node:fs/promises","readFile"]}
+{"id":"domain-runtime-import","fixture":"examples/progresscut/fixtures/block/02-domain-runtime-import.diff","policy_id":"domain-no-runtime-deps","decision":"BLOCK","evidence_any_of":["zod","SessionIdSchema"]}
+{"id":"renderer-electron-import","fixture":"examples/progresscut/fixtures/block/03-renderer-electron-import.diff","policy_id":"renderer-no-electron","decision":"BLOCK","evidence_any_of":["electron","shell"]}
+{"id":"non-atomic-manifest","fixture":"examples/progresscut/fixtures/block/04-non-atomic-manifest.diff","policy_id":"atomic-recovery-write","decision":"BLOCK","evidence_any_of":["writeFile(path","manifest"]}
+{"id":"uncapped-render","fixture":"examples/progresscut/fixtures/block/05-uncapped-render.diff","policy_id":"exact-render-duration","decision":"BLOCK","evidence_any_of":["runFfmpeg","no output cap"]}
+{"id":"output-prefix-confusion","fixture":"examples/progresscut/fixtures/block/06-output-prefix-confusion.diff","policy_id":"safe-output-path","decision":"BLOCK","evidence_any_of":["startsWith(root)","run-17-copy"]}
+{"id":"pure-engine-function","fixture":"examples/progresscut/fixtures/approve/01-pure-engine-function.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["sumDurations","reduce"]}
+{"id":"domain-branded-id","fixture":"examples/progresscut/fixtures/approve/02-domain-branded-id.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["SessionId","type"]}
+{"id":"renderer-bridge","fixture":"examples/progresscut/fixtures/approve/03-renderer-bridge.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["DesktopBridge","openFile"]}
+{"id":"atomic-manifest","fixture":"examples/progresscut/fixtures/approve/04-atomic-manifest.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["temporary","rename"]}
+{"id":"duration-cap","fixture":"examples/progresscut/fixtures/approve/05-duration-cap.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["-t","totalDurationMs"]}
+{"id":"safe-output-path","fixture":"examples/progresscut/fixtures/approve/06-safe-output-path.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["relativeDestination","isAbsolute"]}

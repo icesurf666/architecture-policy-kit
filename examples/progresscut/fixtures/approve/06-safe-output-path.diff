@@ -4,7 +4,12 @@
 @@
 +const root = resolve(outputDir);
 +const destination = resolve(root, requestedName);
-+if (!destination.startsWith(`${root}${sep}`)) {
++const relativeDestination = relative(root, destination);
++if (
++  relativeDestination === '' ||
++  relativeDestination.startsWith(`..${sep}`) ||
++  isAbsolute(relativeDestination)
++) {
 +  throw new Error('Invalid export path');
 +}
 +await writeFile(destination, data);
