@@ -2,6 +2,11 @@
 --- a/apps/desktop/src/main/recovery/save.ts
 +++ b/apps/desktop/src/main/recovery/save.ts
 @@
++import { randomUUID } from 'node:crypto';
++import { rename, writeFile } from 'node:fs/promises';
++
++export async function save(path: string, manifest: object): Promise<void> {
 +const temporary = `${path}.${randomUUID()}.tmp`;
 +await writeFile(temporary, JSON.stringify(manifest));
 +await rename(temporary, path);
++}

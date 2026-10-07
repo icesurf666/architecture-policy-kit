@@ -2,6 +2,14 @@
 --- a/apps/desktop/src/main/export/writeExport.ts
 +++ b/apps/desktop/src/main/export/writeExport.ts
 @@
++import { writeFile } from 'node:fs/promises';
++import { isAbsolute, relative, resolve, sep } from 'node:path';
++
++export async function writeExport(
++  outputDir: string,
++  requestedName: string,
++  data: Uint8Array,
++): Promise<void> {
 +const root = resolve(outputDir);
 +const destination = resolve(root, requestedName);
 +const relativeDestination = relative(root, destination);
@@ -13,3 +21,4 @@
 +  throw new Error('Invalid export path');
 +}
 +await writeFile(destination, data);
++}

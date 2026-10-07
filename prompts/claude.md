@@ -7,6 +7,8 @@ when Claude has repository access:
 Read only files needed to resolve the policy scope and the symbols in the diff.
 Do not expand the task into a full refactor or comment on unrelated style.
 Before answering, verify that the policy scope matches the changed path.
+Return NEEDS_CONTEXT rather than guessing when that minimal inspection cannot
+resolve the policy.
 ```
 
 Validate the returned JSON before consuming it in CI or an automation. A model

@@ -2,6 +2,8 @@
 --- a/apps/desktop/src/main/recovery/save.ts
 +++ b/apps/desktop/src/main/recovery/save.ts
 @@
++import { writeFile } from 'node:fs/promises';
++
 +export async function save(path: string, manifest: object): Promise<void> {
 +  await writeFile(path, JSON.stringify(manifest));
 +}

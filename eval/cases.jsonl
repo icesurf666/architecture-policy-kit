@@ -10,3 +10,4 @@
 {"id":"atomic-manifest","fixture":"examples/progresscut/fixtures/approve/04-atomic-manifest.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["temporary","rename"]}
 {"id":"duration-cap","fixture":"examples/progresscut/fixtures/approve/05-duration-cap.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["-t","totalDurationMs"]}
 {"id":"safe-output-path","fixture":"examples/progresscut/fixtures/approve/06-safe-output-path.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["relativeDestination","isAbsolute"]}
+{"id":"electron-main-process","fixture":"examples/progresscut/fixtures/approve/07-electron-main-process.diff","policy_id":"none","decision":"APPROVE","evidence_any_of":["shell","openPath"]}

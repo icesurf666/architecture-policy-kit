@@ -8,7 +8,8 @@
 4. Keep some cases private. Public fixtures teach the method; private fixtures
    tell you whether a model or prompt change actually regressed.
 5. Run the reviewer and record false accepts, false blocks, schema failures, and
-   evidence failures separately.
+   evidence failures separately. Route `NEEDS_CONTEXT` to a human instead of
+   treating missing context as an approval.
 6. Move every deterministic rule into lint or tests. Keep the AI reviewer for
    semantic and mixed rules, where it can point a human at a questionable change.
 7. Re-run the suite after changing the model, prompt, policy wording, or review

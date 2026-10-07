@@ -2,8 +2,17 @@
 --- a/apps/desktop/src/main/export/writeExport.ts
 +++ b/apps/desktop/src/main/export/writeExport.ts
 @@
++import { writeFile } from 'node:fs/promises';
++import { resolve } from 'node:path';
++
++export async function writeExport(
++  outputDir: string,
++  requestedName: string,
++  data: Uint8Array,
++): Promise<void> {
 +const root = resolve(outputDir);
 +const destination = resolve(root, requestedName);
 +if (!destination.startsWith(root)) throw new Error('Invalid export path');
 +await writeFile(destination, data);
 +// /sessions/run-17-copy passes this prefix check for root /sessions/run-17.
++}

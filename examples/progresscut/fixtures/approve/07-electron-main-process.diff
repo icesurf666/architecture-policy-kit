@@ -1,0 +1,9 @@
+# Expected: APPROVE / none
+--- a/apps/desktop/src/main/export/openExport.ts
++++ b/apps/desktop/src/main/export/openExport.ts
+@@
++import { shell } from 'electron';
++
++export function openExport(path: string): Promise<string> {
++  return shell.openPath(path);
++}

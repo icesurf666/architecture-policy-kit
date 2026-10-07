@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/icesurf666/architecture-policy-kit/eval/review-response.schema.json",
+  "title": "Architecture policy review response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision", "policy_id", "evidence", "confidence"],
+  "properties": {
+    "decision": {
+      "enum": ["APPROVE", "BLOCK", "NEEDS_CONTEXT"]
+    },
+    "policy_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "type": "string",
+      "minLength": 1
+    },
+    "confidence": {
+      "enum": ["high", "medium", "low"]
+    }
+  }
+}

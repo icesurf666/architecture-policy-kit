@@ -16,7 +16,7 @@ approve/block near-miss fixtures
         ↓
 reviewer evaluation
         ↓
-false accepts / false blocks / schema failures
+false accepts / false blocks / needs-context / schema failures
         ↓
 deterministic CI where possible; LLM review where context matters
 ```
@@ -30,9 +30,10 @@ you are supposed to copy unchanged.
 policy/schema.json                     JSON Schema for a policy pack
 templates/policy.yaml                  minimal policy-pack template
 examples/progresscut/policy.yaml       six policy examples
-examples/progresscut/fixtures/         paired approve/block near-misses
+examples/progresscut/fixtures/         approve/block scope and boundary cases
 prompts/                               generic, Claude, and Codex contracts
 eval/cases.jsonl                       answer key for the public example set
+eval/review-response.schema.json       JSON Schema for reviewer output
 eval/scoring.md                        how to measure reviewer failures
 docs/                                  rule-writing and adoption guides
 ```
@@ -50,7 +51,7 @@ docs/                                  rule-writing and adoption guides
    - `mixed` — a deterministic test protects the invariant while a reviewer
      catches new ways to bypass the established path.
 5. Run the policy prompt on the fixtures. Record verdict, policy ID, schema
-   compliance, and evidence separately.
+   compliance, evidence, and `NEEDS_CONTEXT` separately.
 6. Move deterministic rules into CI. Keep models as a review signal for the
    remainder.
 
@@ -71,9 +72,10 @@ six policies from a local-first Electron application:
 | Rendered MP4 matches story duration | mixed | `ffprobe` integration test |
 | Export path stays under session root | mixed | traversal unit tests |
 
-The paired fixtures are intentionally close. The renderer may call a typed
-preload bridge, but it may not import Electron. A safe export check must reject
-parent traversal and sibling prefixes, not merely call `resolve()`.
+The fixtures are intentionally close. The renderer may call a typed preload
+bridge, but it may not import Electron; Electron use in the main process is
+outside that renderer-only policy. A safe export check must reject parent
+traversal and sibling prefixes, not merely call `resolve()`.
 
 ## Evaluate a reviewer honestly
 
@@ -87,8 +89,11 @@ For a real evaluation:
 - remove labels before prompting;
 - pin the policy, prompt, model, and integration version;
 - report false accepts and false blocks separately;
-- validate structured output before counting a verdict;
+- validate structured output with the response schema before counting a verdict;
 - check evidence against the diff rather than accepting a long explanation.
+
+In a real PR integration, route `NEEDS_CONTEXT` to a human. Missing context is
+not evidence that a change is safe.
 
 [`eval/scoring.md`](eval/scoring.md) defines the reporting contract. The public
 [Kaggle benchmark](https://www.kaggle.com/benchmarks/pavelkazantsev7776/architecture-aware-typescript-code-review/versions/1)
