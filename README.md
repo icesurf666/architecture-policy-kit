@@ -58,6 +58,19 @@ docs/                                  rule-writing and adoption guides
 Read [`docs/adopting-in-a-real-repo.md`](docs/adopting-in-a-real-repo.md) before
 using a model result as a merge requirement.
 
+### Validate the kit
+
+The repository has no runtime dependency. Run the same validation locally that
+GitHub Actions runs on every change:
+
+```bash
+python3 scripts/validate_assets.py
+```
+
+It verifies schemas, case IDs, fixture references, fixture answer headers,
+referenced policy IDs, and local Markdown links. It does not claim to evaluate
+a model or to validate arbitrary YAML against the policy schema.
+
 ## ProgressCut example
 
 [`examples/progresscut/policy.yaml`](examples/progresscut/policy.yaml) contains

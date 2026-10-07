@@ -10,28 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Validate public evaluation assets
-        run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-
-          root = Path('.')
-          for schema in (
-              root / 'policy/schema.json',
-              root / 'eval/review-response.schema.json',
-          ):
-              json.loads(schema.read_text())
-
-          cases = [
-              json.loads(line)
-              for line in (root / 'eval/cases.jsonl').read_text().splitlines()
-              if line.strip()
-          ]
-          assert cases, 'evaluation set is empty'
-          assert len({case['id'] for case in cases}) == len(cases), 'duplicate case id'
-          for case in cases:
-              assert case['decision'] in {'APPROVE', 'BLOCK'}, case['id']
-              assert case['evidence_any_of'], case['id']
-              assert (root / case['fixture']).is_file(), case['fixture']
-          print(f'validated {len(cases)} public cases')
-          PY
+        run: python3 scripts/validate_assets.py
