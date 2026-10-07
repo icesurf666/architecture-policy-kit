@@ -1,0 +1,9 @@
+# Expected: APPROVE / none
+--- a/apps/desktop/src/renderer/openExport.ts
++++ b/apps/desktop/src/renderer/openExport.ts
+@@
++import type { DesktopBridge } from '../shared/bridge.js';
++
++export function openExport(bridge: DesktopBridge, path: string): void {
++  bridge.openFile(path);
++}

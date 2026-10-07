@@ -1,0 +1,9 @@
+# Expected: BLOCK / safe-output-path
+--- a/apps/desktop/src/main/export/writeExport.ts
++++ b/apps/desktop/src/main/export/writeExport.ts
+@@
++const root = resolve(outputDir);
++const destination = resolve(root, requestedName);
++if (!destination.startsWith(root)) throw new Error('Invalid export path');
++await writeFile(destination, data);
++// /sessions/run-17-copy passes this prefix check for root /sessions/run-17.

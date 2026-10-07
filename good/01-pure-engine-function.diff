@@ -1,0 +1,7 @@
+# Expected: APPROVE / none
+--- a/packages/engine/src/duration/sumDurations.ts
++++ b/packages/engine/src/duration/sumDurations.ts
+@@
++export function sumDurations(durations: readonly number[]): number {
++  return durations.reduce((total, duration) => total + duration, 0);
++}

@@ -1,0 +1,10 @@
+# Expected: APPROVE / none
+--- a/apps/desktop/src/main/export/writeExport.ts
++++ b/apps/desktop/src/main/export/writeExport.ts
+@@
++const root = resolve(outputDir);
++const destination = resolve(root, requestedName);
++if (!destination.startsWith(`${root}${sep}`)) {
++  throw new Error('Invalid export path');
++}
++await writeFile(destination, data);

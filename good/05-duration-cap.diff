@@ -1,0 +1,9 @@
+# Expected: APPROVE / none
+--- a/packages/render/src/ffmpeg/FfmpegRenderer.ts
++++ b/packages/render/src/ffmpeg/FfmpegRenderer.ts
+@@
++await runFfmpeg([
++  '-i', concatPath,
++  '-t', String(story.totalDurationMs / 1000),
++  '-y', outputPath,
++]);

@@ -1,0 +1,9 @@
+# Expected: BLOCK / engine-no-node
+--- a/packages/engine/src/report/readConfig.ts
++++ b/packages/engine/src/report/readConfig.ts
+@@
++import { readFile } from 'node:fs/promises';
++
++export async function readConfig(path: string): Promise<unknown> {
++  return JSON.parse(await readFile(path, 'utf8'));
++}

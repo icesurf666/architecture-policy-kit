@@ -1,0 +1,9 @@
+# Expected: APPROVE / none
+--- a/packages/domain/src/session/id.ts
++++ b/packages/domain/src/session/id.ts
+@@
++export type SessionId = string & { readonly __brand: 'SessionId' };
++
++export function sessionId(value: string): SessionId {
++  return value as SessionId;
++}

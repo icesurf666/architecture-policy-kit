@@ -1,0 +1,9 @@
+# Expected: BLOCK / renderer-no-electron
+--- a/apps/desktop/src/renderer/openExport.ts
++++ b/apps/desktop/src/renderer/openExport.ts
+@@
++import { shell } from 'electron';
++
++export function openExport(path: string): Promise<string> {
++  return shell.openPath(path);
++}

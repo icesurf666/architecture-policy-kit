@@ -1,0 +1,7 @@
+# Expected: BLOCK / domain-no-runtime-deps
+--- a/packages/domain/src/session/id.ts
++++ b/packages/domain/src/session/id.ts
+@@
++import { z } from 'zod';
++
++export const SessionIdSchema = z.string().uuid();

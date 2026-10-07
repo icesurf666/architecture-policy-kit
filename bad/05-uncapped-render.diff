@@ -1,0 +1,6 @@
+# Expected: BLOCK / exact-render-duration
+--- a/packages/render/src/ffmpeg/FfmpegRenderer.ts
++++ b/packages/render/src/ffmpeg/FfmpegRenderer.ts
+@@
++await runFfmpeg(['-i', concatPath, '-c:v', 'libx264', '-y', outputPath]);
++// Story moments have variable durations; no output cap is supplied.

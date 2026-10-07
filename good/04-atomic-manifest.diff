@@ -1,0 +1,7 @@
+# Expected: APPROVE / none
+--- a/apps/desktop/src/main/recovery/save.ts
++++ b/apps/desktop/src/main/recovery/save.ts
+@@
++const temporary = `${path}.${randomUUID()}.tmp`;
++await writeFile(temporary, JSON.stringify(manifest));
++await rename(temporary, path);
