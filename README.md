@@ -42,13 +42,13 @@ docs/                                  rule-writing and adoption guides
 
 1. Copy [`templates/policy.yaml`](templates/policy.yaml) into your repository.
 2. Write five to fifteen policies from incidents, postmortems, and repeated PR
-   comments — not from generic architecture slogans.
+   comments, not from generic architecture slogans.
 3. Give every policy a path scope, a failure it prevents, and one near-miss that
    should still be approved.
 4. Classify it:
-   - `deterministic` — lint, AST checks, or tests can enforce it;
-   - `semantic` — context is needed, so an LLM or human must review it;
-   - `mixed` — a deterministic test protects the invariant while a reviewer
+   - `deterministic`: lint, AST checks, or tests can enforce it;
+   - `semantic`: context is needed, so an LLM or human must review it;
+   - `mixed`: a deterministic test protects the invariant while a reviewer
      catches new ways to bypass the established path.
 5. Run the policy prompt on the fixtures. Record verdict, policy ID, schema
    compliance, evidence, and `NEEDS_CONTEXT` separately.
@@ -125,6 +125,8 @@ your fixtures.
 - [Deterministic checks first](docs/deterministic-vs-llm.md)
 - [Adopting a policy pack](docs/adopting-in-a-real-repo.md)
 - [ProgressCut: the source project](https://github.com/icesurf666/progress-cut)
+- [Article: Green Tests, Broken Architecture (DEV.to)](https://dev.to/pavel_kkkkazantsev/green-tests-broken-architecture-four-models-review-typescript-diffs-16ge)
+- [Kaggle benchmark: Architecture-Aware TypeScript Code Review](https://www.kaggle.com/benchmarks/pavelkazantsev7776/architecture-aware-typescript-code-review/versions/1)
 
 ## License
 
